@@ -311,10 +311,12 @@ class Commanding(commands.Cog):
         if message.author == self.bot.user:
             return
         else:
+            if not hasattr(message, "guild"):
+                return
             # if not public
             if self.bot.config['discord']['is_private'] == 1 and message.author.id not in self.bot.config['discord']['testers']:
                 return
-            if str(message.content).split(" ")[1].lower() in ["reload", "load", "sync"]:
+            if str(message.content).split(" ")[1].lower() in ["reload", "load", "donate", "sync"]:
                 return
             if not self.bot.user.mentioned_in(message):
                 return
