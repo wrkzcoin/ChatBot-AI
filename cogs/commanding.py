@@ -15,6 +15,7 @@ import aiohttp
 import tiktoken
 import requests
 from cachetools import TTLCache
+import random
 from cogs.utils import Utils
 
 SERVER_BOT = "DISCORD"
@@ -362,15 +363,25 @@ class Commanding(commands.Cog):
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
 
+    @tasks.loop(minutes=2.0)
+    async def status_task(self) -> None:
+        """
+        Setup the game status task of the bot
+        """
+        statuses = ["Starts with /", "With /chat", "Brought by WrkzCoin"]
+        await self.bot.change_presence(activity=discord.Game(random.choice(statuses)))
+
     @commands.Cog.listener()
     async def on_ready(self):
         pass
 
     async def cog_load(self) -> None:
-        pass
+        if not self.status_task.is_running():
+            self.status_task.start()
 
     async def cog_unload(self) -> None:
-        pass
+        self.status_task.cancel()
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Commanding(bot))

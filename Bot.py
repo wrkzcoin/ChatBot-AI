@@ -27,7 +27,8 @@ bot = AutoShardedBot(
     intents=intents,
     owner_ids=load_config()['discord']['owner_ids'],
     help_command=None,
-    sync_commands=True
+    sync_commands=True,
+    activity=discord.Activity(type=discord.ActivityType.listening, name="/chat")
 )
 
 bot.config = load_config()
@@ -44,17 +45,7 @@ async def on_ready() -> None:
     print(f"Owner ID: {bot.owner_ids}")
     print(f"Admin: {bot.config['discord']['admin']}")
     print("-------------------")
-    status_task.start()
     await bot.tree.sync()
-
-
-@tasks.loop(minutes=2.0)
-async def status_task() -> None:
-    """
-    Setup the game status task of the bot
-    """
-    statuses = ["Starts with /", "With /chat", "With /ask", "Brought by WrkzCoin"]
-    await bot.change_presence(activity=discord.Game(random.choice(statuses)))
 
 
 @bot.event
